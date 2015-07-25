@@ -13,9 +13,8 @@
             <option value="$PROJECT_DIR$/SlidingMenu-master" />
             <option value="$PROJECT_DIR$/SlidingMenu-master/library" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/lib" />
-            <option value="$PROJECT_DIR$/lib/xUtils-master" />
-            <option value="$PROJECT_DIR$/lib/xUtils-master/library" />
+            <option value="$PROJECT_DIR$/xUtils-master" />
+            <option value="$PROJECT_DIR$/xUtils-master/library" />
           </set>
         </option>
       </GradleProjectSettings>
