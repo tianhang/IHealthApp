@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * 自定义无法滑动的ViewPager
+ * 不能左右划的ViewPager
  * 
  * @author Kevin
  * 
@@ -21,23 +21,17 @@ public class NoScrollViewPager extends ViewPager {
 		super(context);
 	}
 
-	/**
-	 * 表示不对事件进行拦截, 从而可以使嵌套在ViewPager内部的ViewPager可以响应滑动动作
-	 * 
-	 * @param arg0
-	 * @return
-	 */
+	// 表示事件是否拦截, 返回false表示不拦截
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent arg0) {
 		return false;
 	}
 
 	/**
-	 * 拦截ViewPager的触摸事件, 不做任何处理
+	 * 重写onTouchEvent事件,什么都不用做
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent arg0) {
 		return false;
 	}
-
 }

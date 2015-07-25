@@ -2,9 +2,6 @@ package com.ihealth;
 
 import java.util.ArrayList;
 
-import com.ihealth.utils.DensityUtils;
-import com.ihealth.utils.SharePreferenceUtils;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,130 +16,120 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 
-public class GuideActivity extends Activity implements OnClickListener {
+import com.ihealth.utils.PrefUtils;
 
-	protected static final String TAG = GuideActivity.class.getSimpleName();
-	private ViewPager mViewPager;
-	private ArrayList<ImageView> mImageList;// 引导页的ImageView集合
-	private LinearLayout llPointGroup;// 点的集合
-	private View viewRedPoint;// 红点
-	private int mPointWidth; // 两点间距
+/**
+ * 新手引导
+ * 
+ * @author Kevin
+ * 
+ */
+public class GuideActivity extends Activity {
+
+	private static final int[] mImageIds = new int[] { R.drawable.guide_1,
+			R.drawable.guide_2, R.drawable.guide_3 };
+
+	private ViewPager vpGuide;
+	private ArrayList<ImageView> mImageViewList;
+
+	private LinearLayout llPointGroup;// 引导圆点的父控件
+
+	private int mPointWidth;// 圆点间的距离
+
+	private View viewRedPoint;// 小红点
+
 	private Button btnStart;// 开始体验
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);// 去除标题,
-														// 必须在setContentView之前调用
+
+		requestWindowFeature(Window.FEATURE_NO_TITLE);// 去掉标题
 		setContentView(R.layout.activity_guide);
-
-		initViews();
-	}
-
-	private void initViews() {
-		mViewPager = (ViewPager) findViewById(R.id.view_pager);
+		vpGuide = (ViewPager) findViewById(R.id.vp_guide);
 		llPointGroup = (LinearLayout) findViewById(R.id.ll_point_group);
 		viewRedPoint = findViewById(R.id.view_red_point);
 		btnStart = (Button) findViewById(R.id.btn_start);
-		btnStart.setOnClickListener(this);
 
-		initData();
-		mViewPager.setAdapter(new GuideAdapter());
+		btnStart.setOnClickListener(new OnClickListener() {
 
-		// measure -> layout -> draw
-		// 获得视图树观察者, 观察当整个布局的layout时的事件
-		viewRedPoint.getViewTreeObserver().addOnGlobalLayoutListener(
-				new OnGlobalLayoutListener() {
-
-					// 完成布局后会回调改方法, 改方法可能会被回调多次
-					@Override
-					public void onGlobalLayout() {
-						// 此方法只需要执行一次就可以: 把当前的监听事件从视图树中移除掉, 以后就不会在回调此事件了.
-						viewRedPoint.getViewTreeObserver()
-								.removeGlobalOnLayoutListener(this);
-
-						mPointWidth = llPointGroup.getChildAt(1).getLeft()
-								- llPointGroup.getChildAt(0).getLeft();
-
-						System.out.println("间距: " + mPointWidth);
-					}
-				});
-
-		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-
-			// 页面选中
 			@Override
-			public void onPageSelected(int position) {
-				// Log.d(TAG, "onPageSelected:" + position);
-				if (position == mImageList.size() - 1) {
-					btnStart.setVisibility(View.VISIBLE);
-				} else {
-					btnStart.setVisibility(View.GONE);
-				}
-			}
+			public void onClick(View v) {
+				// 更新sp, 表示已经展示了新手引导
+				PrefUtils.setBoolean(GuideActivity.this,
+						"is_user_guide_showed", true);
 
-			/**
-			 * 页面滑动监听
-			 * 
-			 * @params position 当前选中的位置
-			 * @params positionOffset 偏移百分比
-			 * @params positionOffsetPixels 页面偏移长度
-			 */
-			@Override
-			public void onPageScrolled(int position, float positionOffset,
-					int positionOffsetPixels) {
-				int leftMargin = (int) (mPointWidth * (positionOffset + position));
-				// Log.d(TAG, "当前位置:" + position + ";偏移比例:" + positionOffset
-				// + ";点偏移:" + leftMargin);
-
-				RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) viewRedPoint
-						.getLayoutParams();
-				lp.leftMargin = leftMargin;
-				viewRedPoint.setLayoutParams(lp);
-			}
-
-			// 状态改变
-			@Override
-			public void onPageScrollStateChanged(int state) {
-				// Log.d(TAG, "onPageScrollStateChanged:" + state);
+				// 跳转主页面
+				startActivity(new Intent(GuideActivity.this, MainActivity.class));
+				finish();
 			}
 		});
+
+		initViews();
+		vpGuide.setAdapter(new GuideAdapter());
+
+		vpGuide.setOnPageChangeListener(new GuidePageListener());
 	}
 
-	// 初始化ViewPager的数据
-	private void initData() {
-		int[] imageResIDs = { R.drawable.guide_1, R.drawable.guide_2,
-				R.drawable.guide_3 };
+	/**
+	 * 初始化界面
+	 */
+	private void initViews() {
+		mImageViewList = new ArrayList<ImageView>();
 
-		mImageList = new ArrayList<ImageView>();
-		for (int i = 0; i < imageResIDs.length; i++) {
+		// 初始化引导页的3个页面
+		for (int i = 0; i < mImageIds.length; i++) {
 			ImageView image = new ImageView(this);
-			image.setBackgroundResource(imageResIDs[i]);// 注意设置背景, 才可以填充屏幕
-			mImageList.add(image);
+			image.setBackgroundResource(mImageIds[i]);// 设置引导页背景
+			mImageViewList.add(image);
+		}
 
+		// 初始化引导页的小圆点
+		for (int i = 0; i < mImageIds.length; i++) {
 			View point = new View(this);
-			point.setBackgroundResource(R.drawable.shape_guide_point_default);
+			point.setBackgroundResource(R.drawable.shape_point_gray);// 设置引导页默认圆点
 
-			LayoutParams params = new LayoutParams(
-					DensityUtils.dp2px(this, 10), DensityUtils.dp2px(this, 10));
-
-			if (i != 0) {
-				params.leftMargin = DensityUtils.dp2px(this, 10);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+					10, 10);
+			if (i > 0) {
+				params.leftMargin = 10;// 设置圆点间隔
 			}
 
-			point.setLayoutParams(params);
-			llPointGroup.addView(point);
+			point.setLayoutParams(params);// 设置圆点的大小
+
+			llPointGroup.addView(point);// 将圆点添加给线性布局
 		}
+
+		// 获取视图树, 对layout结束事件进行监听
+		llPointGroup.getViewTreeObserver().addOnGlobalLayoutListener(
+				new OnGlobalLayoutListener() {
+
+					// 当layout执行结束后回调此方法
+					@Override
+					public void onGlobalLayout() {
+						System.out.println("layout 结束");
+						llPointGroup.getViewTreeObserver()
+								.removeGlobalOnLayoutListener(this);
+						mPointWidth = llPointGroup.getChildAt(1).getLeft()
+								- llPointGroup.getChildAt(0).getLeft();
+						System.out.println("圆点距离:" + mPointWidth);
+					}
+				});
 	}
 
+	/**
+	 * ViewPager数据适配器
+	 * 
+	 * @author Kevin
+	 * 
+	 */
 	class GuideAdapter extends PagerAdapter {
 
 		@Override
 		public int getCount() {
-			return mImageList.size();
+			return mImageIds.length;
 		}
 
 		@Override
@@ -152,34 +139,55 @@ public class GuideActivity extends Activity implements OnClickListener {
 
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
-			container.addView(mImageList.get(position));
-			return mImageList.get(position);
+			container.addView(mImageViewList.get(position));
+			return mImageViewList.get(position);
 		}
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-			container.removeView((ImageView) object);
+			container.removeView((View) object);
+		}
+	}
+
+	/**
+	 * viewpager的滑动监听
+	 * 
+	 * @author Kevin
+	 * 
+	 */
+	class GuidePageListener implements OnPageChangeListener {
+
+		// 滑动事件
+		@Override
+		public void onPageScrolled(int position, float positionOffset,
+				int positionOffsetPixels) {
+			// System.out.println("当前位置:" + position + ";百分比:" + positionOffset
+			// + ";移动距离:" + positionOffsetPixels);
+			int len = (int) (mPointWidth * positionOffset) + position
+					* mPointWidth;
+			RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) viewRedPoint
+					.getLayoutParams();// 获取当前红点的布局参数
+			params.leftMargin = len;// 设置左边距
+
+			viewRedPoint.setLayoutParams(params);// 重新给小红点设置布局参数
+		}
+
+		// 某个页面被选中
+		@Override
+		public void onPageSelected(int position) {
+			if (position == mImageIds.length - 1) {// 最后一个页面
+				btnStart.setVisibility(View.VISIBLE);// 显示开始体验的按钮
+			} else {
+				btnStart.setVisibility(View.INVISIBLE);
+			}
+		}
+
+		// 滑动状态发生变化
+		@Override
+		public void onPageScrollStateChanged(int state) {
+
 		}
 
 	}
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.btn_start:
-			// 开始体验
-			SharePreferenceUtils.putBoolean(this,
-					SplashActivity.PREF_IS_USER_GUIDE_SHOWED, true);// 记录已经展现过了新手引导页
-
-			Intent intent = new Intent(this, MainActivity.class);
-			startActivity(intent);
-
-			finish();
-
-			break;
-
-		default:
-			break;
-		}
-	}
 }

@@ -3,102 +3,99 @@ package com.ihealth.fragment;
 import java.util.ArrayList;
 
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
-import com.ihealth.MainActivity;
 import com.ihealth.R;
 import com.ihealth.base.BasePager;
-import com.ihealth.base.impl.GovAffairPager;
+import com.ihealth.base.impl.GovAffairsPager;
 import com.ihealth.base.impl.HomePager;
 import com.ihealth.base.impl.NewsCenterPager;
-import com.ihealth.base.impl.SmartServicePager;
 import com.ihealth.base.impl.SettingPager;
-import com.ihealth.view.NoScrollViewPager;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.ihealth.base.impl.SmartServicePager;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 /**
- * 主页面Fragment
+ * 主页内容
  * 
  * @author Kevin
  * 
  */
 public class ContentFragment extends BaseFragment {
 
-	@ViewInject(R.id.vp_content_pager)
-	// 通过注解方式初始化View
-	private NoScrollViewPager mViewPager;
+//	@ViewInject(R.id.rg_group)
+//	private RadioGroup rgGroup;
 
-	@ViewInject(R.id.rg_content_group)
-	private RadioGroup mRadioGroup;
+	@ViewInject(R.id.vp_content)
+	private ViewPager mViewPager;
 
-	private ArrayList<BasePager> mPagerList;// 五个子页面的集合,作为ViewPager的数据源
+	private ArrayList<BasePager> mPagerList;
 
 	@Override
-	public View initView() {
+	public View initViews() {
 		View view = View.inflate(mActivity, R.layout.fragment_content, null);
-		ViewUtils.inject(this, view); // 把当前的View对象注入到xUtils框架中
+		// rgGroup = (RadioGroup) view.findViewById(R.id.rg_group);
+		ViewUtils.inject(this, view); // 注入view和事件
 		return view;
 	}
 
 	@Override
 	public void initData() {
-		mRadioGroup.check(R.id.rb_home);// 设置默认选项为首页
-
-		// 向集合中添加5个页面
+//		rgGroup.check(R.id.rb_home);// 默认勾选首页
+//
+//		// 初始化5个子页面
 		mPagerList = new ArrayList<BasePager>();
-		mPagerList.add(new HomePager(mActivity));// 添加首页
-		mPagerList.add(new NewsCenterPager(mActivity));// 添加新闻中心
-		mPagerList.add(new SmartServicePager(mActivity));// 添加智慧服务
-		mPagerList.add(new GovAffairPager(mActivity));// 添加政务
-		mPagerList.add(new SettingPager(mActivity));// 添加设置
+//		// for (int i = 0; i < 5; i++) {
+//		// BasePager pager = new BasePager(mActivity);
+//		// mPagerList.add(pager);
+//		// }
+		mPagerList.add(new HomePager(mActivity));
+		mPagerList.add(new NewsCenterPager(mActivity));
+		mPagerList.add(new SmartServicePager(mActivity));
+		mPagerList.add(new GovAffairsPager(mActivity));
+		mPagerList.add(new SettingPager(mActivity));
+//
+		mViewPager.setAdapter(new ContentAdapter());
+//
+//		// 监听RadioGroup的选择事件
+//		rgGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//
+//			@Override
+//			public void onCheckedChanged(RadioGroup group, int checkedId) {
+//				switch (checkedId) {
+//				case R.id.rb_home:
+//					// mViewPager.setCurrentItem(0);// 设置当前页面
+//					mViewPager.setCurrentItem(0, false);// 去掉切换页面的动画
+//					break;
+//				case R.id.rb_news:
+//					mViewPager.setCurrentItem(1, false);// 设置当前页面
+//					break;
+//				case R.id.rb_smart:
+//					mViewPager.setCurrentItem(2, false);// 设置当前页面
+//					break;
+//				case R.id.rb_gov:
+//					mViewPager.setCurrentItem(3, false);// 设置当前页面
+//					break;
+//				case R.id.rb_setting:
+//					mViewPager.setCurrentItem(4, false);// 设置当前页面
+//					break;
+//
+//				default:
+//					break;
+//				}
+//			}
+//		});
 
-		mViewPager.setAdapter(new ContentAdapter());// 设置ViewPager的数据源
-
-		// 监听RadioGroup的选中事件,对页面进行切换
-		mRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				switch (checkedId) {
-				case R.id.rb_home:
-					mViewPager.setCurrentItem(0, false);// 让ViewPager切换到第一个页面
-					setSlidingMenuEnable(false);
-					break;
-				case R.id.rb_news:
-					mViewPager.setCurrentItem(1, false);
-					setSlidingMenuEnable(true);
-					break;
-				case R.id.rb_service:
-					mViewPager.setCurrentItem(2, false);
-					setSlidingMenuEnable(true);
-					break;
-				case R.id.rb_gov:
-					mViewPager.setCurrentItem(3, false);
-					setSlidingMenuEnable(true);
-					break;
-				case R.id.rb_setting:
-					mViewPager.setCurrentItem(4, false);
-					setSlidingMenuEnable(false);
-					break;
-
-				default:
-					break;
-				}
-			}
-		});
-
-		// 监听ViewPager的选中事件
 		mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
 
 			@Override
-			public void onPageSelected(int position) {
-				mPagerList.get(position).initData();// 当该页面选中时,才开始初始化当前页面的数据
+			public void onPageSelected(int arg0) {
+				mPagerList.get(arg0).initData();// 获取当前被选中的页面, 初始化该页面数据
 			}
 
 			@Override
@@ -112,19 +109,7 @@ public class ContentFragment extends BaseFragment {
 			}
 		});
 
-		mPagerList.get(0).initData();// 初始化第一页的数据
-		setSlidingMenuEnable(false);// 不允许首页拉出侧边栏
-	}
-
-	private void setSlidingMenuEnable(boolean enable) {
-		MainActivity mainUI = (MainActivity) mActivity;
-		SlidingMenu slidingMenu = mainUI.getSlidingMenu();
-
-		if (enable) {
-			slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-		} else {
-			slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-		}
+		mPagerList.get(0).initData();// 初始化首页数据
 	}
 
 	class ContentAdapter extends PagerAdapter {
@@ -142,16 +127,16 @@ public class ContentFragment extends BaseFragment {
 		@Override
 		public Object instantiateItem(ViewGroup container, int position) {
 			BasePager pager = mPagerList.get(position);
-			View view = pager.mRootView;// 获取当前页面的布局对象
-			container.addView(view);// 将布局对象添加到容器中
-			// pager.initData();// 初始化数据, 为了节省流量,不在这里调用初始化数据的方法, 只有当标签真正被选中时才调用
-			return view;
+			container.addView(pager.mRootView);
+			// pager.initData();// 初始化数据.... 不要放在此处初始化数据, 否则会预加载下一个页面
+			return pager.mRootView;
 		}
 
 		@Override
 		public void destroyItem(ViewGroup container, int position, Object object) {
-			container.removeView((View) object);// 从容器中销毁view对象
+			container.removeView((View) object);
 		}
+
 	}
 
 	/**
@@ -161,5 +146,11 @@ public class ContentFragment extends BaseFragment {
 	 */
 	public NewsCenterPager getNewsCenterPager() {
 		return (NewsCenterPager) mPagerList.get(1);
+	}
+	/**
+	 * get ViewPager
+	 */
+	public ViewPager getmViewPager(){
+		return mViewPager;
 	}
 }

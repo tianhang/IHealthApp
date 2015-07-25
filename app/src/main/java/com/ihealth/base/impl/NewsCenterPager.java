@@ -3,26 +3,23 @@ package com.ihealth.base.impl;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageButton;
+import android.graphics.Color;
+import android.view.Gravity;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.ihealth.MainActivity;
-import com.ihealth.R;
 import com.ihealth.base.BaseMenuDetailPager;
 import com.ihealth.base.BasePager;
-import com.ihealth.base.impl.menudetail.InteractMenuDetailPager;
-import com.ihealth.base.impl.menudetail.NewsMenuDetailPager;
-import com.ihealth.base.impl.menudetail.PhotosMenuDetailPager;
-import com.ihealth.base.impl.menudetail.TopicMenuDetailPager;
-import com.ihealth.domain.NewsBean;
-import com.ihealth.domain.NewsBean.NewsMenuBean;
+import com.ihealth.base.menudetail.InteractMenuDetailPager;
+import com.ihealth.base.menudetail.NewsMenuDetailPager;
+import com.ihealth.base.menudetail.PhotoMenuDetailPager;
+import com.ihealth.base.menudetail.TopicMenuDetailPager;
+import com.ihealth.domain.NewsData;
+import com.ihealth.domain.NewsData.NewsMenuData;
 import com.ihealth.fragment.LeftMenuFragment;
 import com.ihealth.global.GlobalContants;
-import com.ihealth.utils.CacheUtils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -37,101 +34,92 @@ import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
  */
 public class NewsCenterPager extends BasePager {
 
-	private ArrayList<BaseMenuDetailPager> mMenuDetailPagers;// 侧边栏详情页列表
-	private ArrayList<NewsMenuBean> mLeftMenuList;// 侧边栏数据
-
-	private ImageButton btnPhotoSwitch;// 切换组图展示方式的按钮
+	private ArrayList<BaseMenuDetailPager> mPagers;// 4个菜单详情页的集合
+	private NewsData mNewsData;
 
 	public NewsCenterPager(Activity activity) {
 		super(activity);
-		btnPhotoSwitch = (ImageButton) mRootView.findViewById(R.id.btn_show);
 	}
 
 	@Override
 	public void initData() {
-		Log.d(TAG, "新闻中心加载数据了");
+		System.out.println("初始化新闻中心数据....");
+
 		tvTitle.setText("新闻");
+		setSlidingMenuEnable(true);// 打开侧边栏
 
-		// 先从缓存中读取数据并展示
-		String cache = CacheUtils.getCache(mActivity, GlobalContants.NEWS_URL);
-		if (!TextUtils.isEmpty(cache)) {
-			processData(cache);
-		}
-
-		getDataFromNet();// 从网络获取数据
+		getDataFromServer();
 	}
 
 	/**
-	 * 从网络获取数据
+	 * 从服务器获取数据
 	 */
-	private void getDataFromNet() {
+	private void getDataFromServer() {
 		HttpUtils utils = new HttpUtils();
-		// RequestCallBack的泛型表示返回的数据类型, 在此我们只需要json的字符串文本, 所以传递String就可以
-		utils.send(HttpMethod.GET, GlobalContants.NEWS_URL,
+
+		// 使用xutils发送请求
+		utils.send(HttpMethod.GET, GlobalContants.CATEGORIES_URL,
 				new RequestCallBack<String>() {
 
-					// 请求成功
+					// 访问成功
 					@Override
-					public void onSuccess(ResponseInfo<String> responseInfo) {
-						String result = responseInfo.result;
-						Log.d(TAG, "网络Json数据: " + result);
-						CacheUtils.setCache(mActivity, GlobalContants.NEWS_URL,
-								result);
-						processData(result);
+					public void onSuccess(ResponseInfo responseInfo) {
+						String result = (String) responseInfo.result;
+						System.out.println("返回结果:" + result);
+
+						parseData(result);
 					}
 
-					// 请求失败
+					// 访问失败
 					@Override
 					public void onFailure(HttpException error, String msg) {
-						Log.e(TAG, "请求失败:" + msg);
+						Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT)
+								.show();
 						error.printStackTrace();
 					}
+
 				});
 	}
 
 	/**
-	 * 解析数据
+	 * 解析网络数据
+	 * 
+	 * @param result
 	 */
-	private void processData(String result) {
+	protected void parseData(String result) {
 		Gson gson = new Gson();
-		NewsBean news = gson.fromJson(result, NewsBean.class);
-		Log.d(TAG, "新闻中心数据: " + news);
+		mNewsData = gson.fromJson(result, NewsData.class);
+		System.out.println("解析结果:" + mNewsData);
 
-		mLeftMenuList = news.data;
+		// 刷新测边栏的数据
+		MainActivity mainUi = (MainActivity) mActivity;
+		LeftMenuFragment leftMenuFragment = mainUi.getLeftMenuFragment();
+		leftMenuFragment.setMenuData(mNewsData);
 
-		MainActivity mainUI = (MainActivity) mActivity;// 获取Activity对象
-		LeftMenuFragment fragment = mainUI.getLeftMenuFragment();// 获取侧边栏对象
-		fragment.setNewsMenuData(mLeftMenuList);// 设置侧边栏数据
+		// 准备4个菜单详情页
+		mPagers = new ArrayList<BaseMenuDetailPager>();
+		mPagers.add(new NewsMenuDetailPager(mActivity,
+				mNewsData.data.get(0).children));
+		mPagers.add(new TopicMenuDetailPager(mActivity));
+		mPagers.add(new PhotoMenuDetailPager(mActivity));
+		mPagers.add(new InteractMenuDetailPager(mActivity));
 
-		// 初始化详情页数据
-		mMenuDetailPagers = new ArrayList<BaseMenuDetailPager>();
-		mMenuDetailPagers.add(new NewsMenuDetailPager(mActivity, news.data.get(0)));
-		mMenuDetailPagers.add(new TopicMenuDetailPager(mActivity));
-		mMenuDetailPagers.add(new PhotosMenuDetailPager(mActivity, btnPhotoSwitch));
-		mMenuDetailPagers.add(new InteractMenuDetailPager(mActivity));
-
-		setCurrentDetailPager(0);// 设置新闻页面为初始页面
+		setCurrentMenuDetailPager(0);// 设置菜单详情页-新闻为默认当前页
 	}
 
 	/**
-	 * 设置当前详情页面
-	 * 
-	 * @param position
+	 * 设置当前菜单详情页
 	 */
-	public void setCurrentDetailPager(int position) {
-		Log.d(TAG, "详情页面:" + position);
-		BaseMenuDetailPager detailPager = mMenuDetailPagers.get(position);
+	public void setCurrentMenuDetailPager(int position) {
+		BaseMenuDetailPager pager = mPagers.get(position);// 获取当前要显示的菜单详情页
+		flContent.removeAllViews();// 清除之前的布局
+		flContent.addView(pager.mRootView);// 将菜单详情页的布局设置给帧布局
 
-		if (detailPager instanceof PhotosMenuDetailPager) {// 如果是组图页面,就展示组图切换按钮
-			btnPhotoSwitch.setVisibility(View.VISIBLE);
-		} else {
-			btnPhotoSwitch.setVisibility(View.GONE);
-		}
+		// 设置当前页的标题
+		NewsMenuData menuData = mNewsData.data.get(position);
+		tvTitle.setText(menuData.title);
 
-		flContent.removeAllViews();// 填充界面前,先把以前的界面清空
-		flContent.addView(detailPager.mRootView);// 添加当前详情页的布局
-		detailPager.initData();// 初始化数据
-
-		tvTitle.setText(mLeftMenuList.get(position).title);
+		pager.initData();// 初始化当前页面的数据
 	}
+
 }

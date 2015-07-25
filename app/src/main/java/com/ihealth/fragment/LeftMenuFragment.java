@@ -2,6 +2,7 @@ package com.ihealth.fragment;
 
 import java.util.ArrayList;
 
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,111 +10,125 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.ihealth.MainActivity;
 import com.ihealth.R;
 import com.ihealth.base.impl.NewsCenterPager;
-import com.ihealth.domain.NewsBean.NewsMenuBean;
+import com.ihealth.domain.NewsData;
+import com.ihealth.domain.NewsData.NewsMenuData;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
 
 /**
- * 左侧菜单Fragment
+ * 侧边栏
  * 
  * @author Kevin
  * 
  */
 public class LeftMenuFragment extends BaseFragment {
 
-	private static final String TAG = LeftMenuFragment.class.getSimpleName();
-	ArrayList<NewsMenuBean> mMenuList;// 菜单列表
-	
-	@ViewInject(R.id.lv_left_menu)
-	private ListView lvList;
-	
-	private LeftMenuAdapter mAdapter;
+	private ViewPager mViewPager;
+	@ViewInject(R.id.rg_group)
+	private RadioGroup rgGroup;
 
-	private int mCurrentPosition;// 当前选中第几个菜单
+	@ViewInject(R.id.lv_list)
+	private ListView lvList;
+	private ArrayList<NewsMenuData> mMenuList;
+
+	private int mCurrentPos;// 当前被点击的菜单项
+	//private MenuAdapter mAdapter;
 
 	@Override
-	public View initView() {
+	public View initViews() {
 		View view = View.inflate(mActivity, R.layout.fragment_left_menu, null);
 		ViewUtils.inject(this, view);
-
-		lvList.setOnItemClickListener(new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				mCurrentPosition = position;
-				Log.d(TAG, "当前菜单:" + mCurrentPosition);
-				mAdapter.notifyDataSetChanged();// 刷新listview
-
-				MainActivity mainUI = (MainActivity) mActivity;
-				SlidingMenu slidingMenu = mainUI.getSlidingMenu();
-				slidingMenu.toggle();// 如果侧边栏打开,则关闭;如果关闭,则打开
-				
-				setCurrentDetailPager(position);//设置当前要显示的详情页面
-			}
-		});
 
 		return view;
 	}
 
+	@Override
+	public void initData() {
+
+		// 监听RadioGroup的选择事件
+		rgGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch (checkedId) {
+					case R.id.rb_home:
+						// mViewPager.setCurrentItem(0);// 设置当前页面
+						setCurrentMenuDetailPager(0);// 去掉切换页面的动画
+						break;
+					case R.id.rb_news:
+						setCurrentMenuDetailPager(1);// 设置当前页面
+						break;
+					case R.id.rb_smart:
+						setCurrentMenuDetailPager(2);// 设置当前页面
+						break;
+					case R.id.rb_gov:
+						setCurrentMenuDetailPager(3);// 设置当前页面
+						break;
+					case R.id.rb_setting:
+						setCurrentMenuDetailPager(4);// 设置当前页面
+						break;
+
+					default:
+						break;
+				}
+			}
+		});
+
+//				lvList.setOnItemClickListener(new OnItemClickListener() {
+//
+//			@Override
+//			public void onItemClick(AdapterView<?> parent, View view,
+//					int position, long id) {
+//				mCurrentPos = position;
+//				//mAdapter.notifyDataSetChanged();
+//
+//				setCurrentMenuDetailPager(position);
+//
+//				toggleSlidingMenu();// 隐藏
+//			}
+//		});
+	}
+
 	/**
-	 * 设置当前要显示的详情页面
+	 * 切换SlidingMenu的状态
+	 * 
+	 * @param
+	 */
+	protected void toggleSlidingMenu() {
+		MainActivity mainUi = (MainActivity) mActivity;
+		SlidingMenu slidingMenu = mainUi.getSlidingMenu();
+		slidingMenu.toggle();// 切换状态, 显示时隐藏, 隐藏时显示
+	}
+
+	/**
+	 * 设置当前菜单详情页
+	 * 
 	 * @param position
 	 */
-	protected void setCurrentDetailPager(int position) {
-		MainActivity mainUI = (MainActivity) mActivity;
-		ContentFragment fragment = mainUI.getContentFragment();//获取主页Fragment
-		NewsCenterPager newsCenterPager = fragment.getNewsCenterPager();//获取新闻中心页面
-		newsCenterPager.setCurrentDetailPager(position);//设置新闻中心的详情页面
+	protected void setCurrentMenuDetailPager(int position) {
+		MainActivity mainUi = (MainActivity) mActivity;
+		ContentFragment fragment = mainUi.getContentFragment();// 获取主页面fragment
+		mViewPager = fragment.getmViewPager();
+		mViewPager.setCurrentItem(position, false);
+		toggleSlidingMenu();// 隐藏
+		Log.i("tianhang","choose");
+		//mViewPager
+		//NewsCenterPager pager = fragment.getNewsCenterPager();// 获取新闻中心页面
+		//pager.setCurrentMenuDetailPager(position);// 设置当前菜单详情页
 	}
 
-	/**
-	 * 设置侧边栏数据
-	 * 
-	 * @param data
-	 */
-	public void setNewsMenuData(ArrayList<NewsMenuBean> data) {
-		this.mMenuList = data;
-		mCurrentPosition = 0;//初始化位置信息
-		Log.d(TAG, "侧边栏数据: " + data);
-		mAdapter = new LeftMenuAdapter();
-		lvList.setAdapter(mAdapter);//设置listview的数据源
-	}
-
-	class LeftMenuAdapter extends BaseAdapter {
-
-		@Override
-		public int getCount() {
-			return mMenuList.size();
-		}
-
-		@Override
-		public NewsMenuBean getItem(int position) {
-			return mMenuList.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			View view = View.inflate(mActivity, R.layout.left_menu_list_item,
-					null);
-			TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
-			tvTitle.setText(getItem(position).title);
-
-			// 如果是当前选中的item, 置为可用,显示为红色,如果不是,置为不可用,显示为白色
-			tvTitle.setEnabled(position == mCurrentPosition);
-			return view;
-		}
+	// 设置网络数据
+	public void setMenuData(NewsData data) {
+		// System.out.println("侧边栏拿到数据啦:" + data);
 
 	}
+
+
 }

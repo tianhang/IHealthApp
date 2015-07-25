@@ -2,15 +2,16 @@ package com.ihealth.base.impl;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.ihealth.MainActivity;
 import com.ihealth.base.BasePager;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 /**
- * 首页
+ * 首页实现
  * 
  * @author Kevin
  * 
@@ -23,18 +24,20 @@ public class HomePager extends BasePager {
 
 	@Override
 	public void initData() {
-		Log.d(TAG, "首页加载数据了");
+		System.out.println("初始化首页数据....");
 		
-		tvTitle.setText("智慧北京");
-		btnMenu.setVisibility(View.GONE);
+		tvTitle.setText("智慧北京");// 修改标题
+		//btnMenu.setVisibility(View.GONE);// 隐藏菜单按钮
+		setSlidingMenuEnable(true);//关闭侧边栏
 
-		TextView tvContent = new TextView(mActivity);
-		tvContent.setText("首页");
-		tvContent.setTextColor(Color.RED);
-		tvContent.setTextSize(25);
-		tvContent.setGravity(Gravity.CENTER);
+		TextView text = new TextView(mActivity);
+		text.setText("首页");
+		text.setTextColor(Color.RED);
+		text.setTextSize(25);
+		text.setGravity(Gravity.CENTER);
 
-		flContent.addView(tvContent);
+		// 向FrameLayout中动态添加布局
+		flContent.addView(text);
 	}
 
 }

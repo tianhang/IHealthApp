@@ -1,11 +1,8 @@
 package com.ihealth;
 
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 
 import com.ihealth.fragment.ContentFragment;
@@ -13,73 +10,63 @@ import com.ihealth.fragment.LeftMenuFragment;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
-
 /**
  * 主页面
- *
+ * 
  * @author Kevin
- *
+ * 
  */
 public class MainActivity extends SlidingFragmentActivity {
 
-    private static final String FRAG_CONTENT = "frag_content";// 主页面Fragment的标记
-    private static final String FRAG_MENU_LEFT = "frag_menu_left";// 侧边栏Fragment的标记
+	private static final String FRAGMENT_LEFT_MENU = "fragment_left_menu";
+	private static final String FRAGMENT_CONTENT = "fragment_content";
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);// 去除标题
-        setContentView(R.layout.activity_main);// 配置主界面
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_main);
 
-        // 配置左侧菜单
-        setBehindContentView(R.layout.left_menu);
-        // 设置菜单模式
-        SlidingMenu slidingMenu = getSlidingMenu();
-        slidingMenu.setMode(SlidingMenu.LEFT);
-        // 设置触摸模式
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        // 设置主界面显示宽度
-        int width = getWindowManager().getDefaultDisplay().getWidth();
-        slidingMenu.setBehindOffset(width*3/5);
+		setBehindContentView(R.layout.left_menu);// 设置侧边栏
+		SlidingMenu slidingMenu = getSlidingMenu();// 获取侧边栏对象
+		slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);// 设置全屏触摸
+		slidingMenu.setBehindOffset(200);// 设置预留屏幕的宽度
 
-        initFragment();
-    }
+		initFragment();
+	}
 
-    /**
-     * 初始化Fragment
-     */
-    private void initFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        // 开启事务
-        FragmentTransaction ft = fm.beginTransaction();
-        // 替换帧布局
-        ft.replace(R.id.fl_left_menu, new LeftMenuFragment(), FRAG_MENU_LEFT);
-        ft.replace(R.id.fl_main, new ContentFragment(), FRAG_CONTENT);
-        // 提交事务
-        ft.commit();
-        // fm.findFragmentByTag(arg0); 根据tag获取Fragment对象
-    }
+	/**
+	 * 初始化fragment, 将fragment数据填充给布局文件
+	 */
+	private void initFragment() {
+		FragmentManager fm = getSupportFragmentManager();
+		FragmentTransaction transaction = fm.beginTransaction();// 开启事务
 
-    /**
-     * 获取侧边栏对象
-     * @return
-     */
-    public LeftMenuFragment getLeftMenuFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        LeftMenuFragment fragment = (LeftMenuFragment) fm
-                .findFragmentByTag(FRAG_MENU_LEFT);//根据tag获取Fragment对象
-        return fragment;
-    }
+		transaction.replace(R.id.fl_left_menu, new LeftMenuFragment(),
+				FRAGMENT_LEFT_MENU);// 用fragment替换framelayout
+		transaction.replace(R.id.fl_content, new ContentFragment(),
+				FRAGMENT_CONTENT);
 
-    /**
-     * 获取主页对象
-     * @return
-     */
-    public ContentFragment getContentFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        ContentFragment fragment = (ContentFragment) fm
-                .findFragmentByTag(FRAG_CONTENT);//根据tag获取Fragment对象
-        return fragment;
-    }
+		transaction.commit();// 提交事务
+		// Fragment leftMenuFragment = fm.findFragmentByTag(FRAGMENT_LEFT_MENU);
+	}
+
+	// 获取侧边栏fragment
+	public LeftMenuFragment getLeftMenuFragment() {
+		FragmentManager fm = getSupportFragmentManager();
+		LeftMenuFragment fragment = (LeftMenuFragment) fm
+				.findFragmentByTag(FRAGMENT_LEFT_MENU);
+
+		return fragment;
+	}
+
+	// 获取主页面fragment
+	public ContentFragment getContentFragment() {
+		FragmentManager fm = getSupportFragmentManager();
+		ContentFragment fragment = (ContentFragment) fm
+				.findFragmentByTag(FRAGMENT_CONTENT);
+
+		return fragment;
+	}
 
 }

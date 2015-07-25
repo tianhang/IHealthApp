@@ -12,48 +12,55 @@ import com.ihealth.R;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 /**
- * 主页的各个子页面的父类
+ * 主页下5个子页面的基类
  * 
  * @author Kevin
  * 
  */
 public class BasePager {
 
-	public static final String TAG = BasePager.class.getSimpleName();
-	
 	public Activity mActivity;
-	public TextView tvTitle;// 标题
-	public ImageButton btnMenu;// 菜单按钮
-	public FrameLayout flContent;// 正文
+	public View mRootView;// 布局对象
 
-	public View mRootView; // 根布局的view对象
+	public TextView tvTitle;// 标题对象
+
+	public FrameLayout flContent;// 内容
+
+	public ImageButton btnMenu;// 菜单按钮
 
 	public BasePager(Activity activity) {
 		mActivity = activity;
-		mRootView = initView();
+		initViews();
 	}
 
 	/**
-	 * 初始化View
+	 * 初始化布局
 	 */
-	public View initView() {
-		View view = View.inflate(mActivity, R.layout.base_pager, null);
-		tvTitle = (TextView) view.findViewById(R.id.tv_title);
-		btnMenu = (ImageButton) view.findViewById(R.id.btn_menu);
-		flContent = (FrameLayout) view.findViewById(R.id.fl_content);
-		
-		//点击按键, 打开/关闭侧边栏
+	public void initViews() {
+		mRootView = View.inflate(mActivity, R.layout.base_pager, null);
+
+		tvTitle = (TextView) mRootView.findViewById(R.id.tv_title);
+		flContent = (FrameLayout) mRootView.findViewById(R.id.fl_content);
+		btnMenu = (ImageButton) mRootView.findViewById(R.id.btn_menu);
+
 		btnMenu.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				MainActivity mainUI = (MainActivity) mActivity;
-				SlidingMenu slidingMenu = mainUI.getSlidingMenu();
-				slidingMenu.toggle();// 如果侧边栏打开,则关闭;如果关闭,则打开
+				toggleSlidingMenu();
 			}
 		});
-		
-		return view;
+	}
+
+	/**
+	 * 切换SlidingMenu的状态
+	 * 
+	 * @param
+	 */
+	protected void toggleSlidingMenu() {
+		MainActivity mainUi = (MainActivity) mActivity;
+		SlidingMenu slidingMenu = mainUi.getSlidingMenu();
+		slidingMenu.toggle();// 切换状态, 显示时隐藏, 隐藏时显示
 	}
 
 	/**
@@ -62,4 +69,22 @@ public class BasePager {
 	public void initData() {
 
 	}
+
+	/**
+	 * 设置侧边栏开启或关闭
+	 * 
+	 * @param enable
+	 */
+	public void setSlidingMenuEnable(boolean enable) {
+		MainActivity mainUi = (MainActivity) mActivity;
+
+		SlidingMenu slidingMenu = mainUi.getSlidingMenu();
+
+		if (enable) {
+			slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+		} else {
+			slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+		}
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.ihealth.base.impl.menudetail;
+package com.ihealth.base.menudetail;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.ihealth.base.BaseMenuDetailPager;
 
 /**
- * 侧边栏, 互动详情页面
+ * 菜单详情页-互动
  * 
  * @author Kevin
  * 
@@ -21,14 +21,14 @@ public class InteractMenuDetailPager extends BaseMenuDetailPager {
 	}
 
 	@Override
-	public View initView() {
-		TextView tvContent = new TextView(mActivity);
-		tvContent.setText("详情页: 互动");
-		tvContent.setTextColor(Color.RED);
-		tvContent.setTextSize(25);
-		tvContent.setGravity(Gravity.CENTER);
+	public View initViews() {
+		TextView text = new TextView(mActivity);
+		text.setText("菜单详情页-互动");
+		text.setTextColor(Color.RED);
+		text.setTextSize(25);
+		text.setGravity(Gravity.CENTER);
 
-		return tvContent;
+		return text;
 	}
 
 }

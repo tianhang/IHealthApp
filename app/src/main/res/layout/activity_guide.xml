@@ -1,10 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+        android:id="@+id/vp_guide"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -16,11 +16,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="60dp"
         android:background="@drawable/btn_guide_selector"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:padding="5dp"
         android:text="开始体验"
-        android:textColor="@drawable/txt_guide_selector"
-        android:visibility="gone" />
+        android:visibility="invisible"
+        android:textColor="@drawable/btn_guide_text_selector" />
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -40,7 +39,7 @@
             android:id="@+id/view_red_point"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:background="@drawable/shape_guide_point_selected" />
+            android:background="@drawable/shape_point_red" />
     </RelativeLayout>
 
 </RelativeLayout>

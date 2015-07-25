@@ -8,26 +8,26 @@ import android.widget.TextView;
 import com.ihealth.base.BasePager;
 
 /**
- * 智慧服务
+ * 政务
  * 
  * @author Kevin
  * 
  */
-public class SmartServicePager extends BasePager {
+public class GovAffairsPager extends BasePager {
 
-	public SmartServicePager(Activity activity) {
+	public GovAffairsPager(Activity activity) {
 		super(activity);
 	}
 
 	@Override
 	public void initData() {
-		System.out.println("初始化智慧服务数据....");
-
-		tvTitle.setText("生活");
+		System.out.println("初始化政务数据....");
+		
+		tvTitle.setText("人口管理");
 		setSlidingMenuEnable(true);// 打开侧边栏
 
 		TextView text = new TextView(mActivity);
-		text.setText("智慧服务");
+		text.setText("政务");
 		text.setTextColor(Color.RED);
 		text.setTextSize(25);
 		text.setGravity(Gravity.CENTER);
