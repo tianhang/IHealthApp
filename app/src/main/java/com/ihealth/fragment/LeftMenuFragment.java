@@ -11,10 +11,10 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.itheima.zhbjteach.MainActivity;
-import com.itheima.zhbjteach.R;
-import com.itheima.zhbjteach.base.impl.NewsCenterPager;
-import com.itheima.zhbjteach.domain.NewsBean.NewsMenuBean;
+import com.ihealth.MainActivity;
+import com.ihealth.R;
+import com.ihealth.base.impl.NewsCenterPager;
+import com.ihealth.domain.NewsBean.NewsMenuBean;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;

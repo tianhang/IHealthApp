@@ -6,7 +6,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.itheima.zhbjteach.base.BaseMenuDetailPager;
+import com.ihealth.base.BaseMenuDetailPager;
 
 /**
  * 侧边栏, 专题详情页面

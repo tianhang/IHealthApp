@@ -6,7 +6,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import com.itheima.zhbjteach.base.BasePager;
+import com.ihealth.base.BasePager;
 /**
  * 政务
  * @author Kevin

@@ -7,7 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.itheima.zhbjteach.base.BasePager;
+import com.ihealth.base.BasePager;
 
 /**
  * 首页

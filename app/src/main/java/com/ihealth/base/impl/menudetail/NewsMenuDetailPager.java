@@ -10,11 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.itheima.zhbjteach.MainActivity;
-import com.itheima.zhbjteach.R;
-import com.itheima.zhbjteach.base.BaseMenuDetailPager;
-import com.itheima.zhbjteach.domain.NewsBean.NewsMenuBean;
-import com.itheima.zhbjteach.domain.NewsBean.NewsMenuTab;
+import com.ihealth.MainActivity;
+import com.ihealth.R;
+import com.ihealth.base.BaseMenuDetailPager;
+import com.ihealth.domain.NewsBean.NewsMenuBean;
+import com.ihealth.domain.NewsBean.NewsMenuTab;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;

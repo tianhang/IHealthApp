@@ -10,19 +10,19 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
 import com.google.gson.Gson;
-import com.itheima.zhbjteach.MainActivity;
-import com.itheima.zhbjteach.R;
-import com.itheima.zhbjteach.base.BaseMenuDetailPager;
-import com.itheima.zhbjteach.base.BasePager;
-import com.itheima.zhbjteach.base.impl.menudetail.InteractMenuDetailPager;
-import com.itheima.zhbjteach.base.impl.menudetail.NewsMenuDetailPager;
-import com.itheima.zhbjteach.base.impl.menudetail.PhotosMenuDetailPager;
-import com.itheima.zhbjteach.base.impl.menudetail.TopicMenuDetailPager;
-import com.itheima.zhbjteach.domain.NewsBean;
-import com.itheima.zhbjteach.domain.NewsBean.NewsMenuBean;
-import com.itheima.zhbjteach.fragment.LeftMenuFragment;
-import com.itheima.zhbjteach.global.GlobalContants;
-import com.itheima.zhbjteach.utils.CacheUtils;
+import com.ihealth.MainActivity;
+import com.ihealth.R;
+import com.ihealth.base.BaseMenuDetailPager;
+import com.ihealth.base.BasePager;
+import com.ihealth.base.impl.menudetail.InteractMenuDetailPager;
+import com.ihealth.base.impl.menudetail.NewsMenuDetailPager;
+import com.ihealth.base.impl.menudetail.PhotosMenuDetailPager;
+import com.ihealth.base.impl.menudetail.TopicMenuDetailPager;
+import com.ihealth.domain.NewsBean;
+import com.ihealth.domain.NewsBean.NewsMenuBean;
+import com.ihealth.fragment.LeftMenuFragment;
+import com.ihealth.global.GlobalContants;
+import com.ihealth.utils.CacheUtils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -105,8 +105,7 @@ public class NewsCenterPager extends BasePager {
 
 		// 初始化详情页数据
 		mMenuDetailPagers = new ArrayList<BaseMenuDetailPager>();
-		mMenuDetailPagers.add(new NewsMenuDetailPager(mActivity, news.data
-				.get(0)));
+		mMenuDetailPagers.add(new NewsMenuDetailPager(mActivity, news.data.get(0)));
 		mMenuDetailPagers.add(new TopicMenuDetailPager(mActivity));
 		mMenuDetailPagers.add(new PhotosMenuDetailPager(mActivity, btnPhotoSwitch));
 		mMenuDetailPagers.add(new InteractMenuDetailPager(mActivity));

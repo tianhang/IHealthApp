@@ -2,8 +2,8 @@ package com.ihealth;
 
 import java.util.ArrayList;
 
-import com.itheima.zhbjteach.utils.DensityUtils;
-import com.itheima.zhbjteach.utils.SharePreferenceUtils;
+import com.ihealth.utils.DensityUtils;
+import com.ihealth.utils.SharePreferenceUtils;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Android-ViewPagerIndicator-master/Android-ViewPagerIndicator-master.iml" filepath="$PROJECT_DIR$/Android-ViewPagerIndicator-master/Android-ViewPagerIndicator-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/IHealth.iml" filepath="$PROJECT_DIR$/IHealth.iml" />
       <module fileurl="file://$PROJECT_DIR$/SlidingMenu-master/SlidingMenu-master.iml" filepath="$PROJECT_DIR$/SlidingMenu-master/SlidingMenu-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SlidingMenu-master/library/SlidingMenu-master-library.iml" filepath="$PROJECT_DIR$/SlidingMenu-master/library/SlidingMenu-master-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib/lib.iml" filepath="$PROJECT_DIR$/lib/lib.iml" />
       <module fileurl="file://$PROJECT_DIR$/SlidingMenu-master/library/library.iml" filepath="$PROJECT_DIR$/SlidingMenu-master/library/library.iml" />

@@ -7,8 +7,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.itheima.zhbjteach.MainActivity;
-import com.itheima.zhbjteach.R;
+import com.ihealth.MainActivity;
+import com.ihealth.R;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 /**
